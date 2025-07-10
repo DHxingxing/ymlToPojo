@@ -1,0 +1,54 @@
+# AI模型配置文件
+# 用于统一管理所有AI模型的配置信息
+ai-models:
+  # DeepSeek系列模型
+  deepseek-r1-v1:
+    name: "DeepSeek-R1"
+    description: "DeepSeek R1 推理模型"
+    provider: "DeepSeek"
+    params:
+      api-key: "sk-u13iFhnA32zNdMkW3937B9A22dFc4e21BeB601149c185446"
+      endpoint: "http://maas-api.cn-huabei-1.xf-yun.com/v1/chat/completions"
+      model-name: "xdeepseekr1"
+      timeout: 120000
+      temperature: 0.7
+      max-tokens: 4096
+      appid: "dmsxjgjp"
+      appKey: "5b812c4c35f7cf47c12bc322bea8284d"
+      duhaixing: 66666666
+      # 新增中海油配置
+      requestUrl: "http://10.74.1.39:30016/rmh31s7w"
+      apiSecret: "FEAD93B229FF475E99D17B072989F7AF"
+      stream: true
+
+  # 中海油DeepSeek模型
+  zhyDeepseek-r1-v1:
+    name: "中海油-DeepSeek-R1"
+    description: "中海油定制版DeepSeek R1模型"
+    provider: "中海油-DS"
+    params:
+      api-key: "sk-u13iFhnA32zNdMkW3937B9A22dFc4e21BeB601149c185446"  # 如不同可单独写
+      endpoint: "http://10.74.1.39:30016/rmh31s7w"
+      model-name: "中海油-DeepSeek-R1"
+      timeout: 150000
+      temperature: 0.8
+      max-tokens: 3500
+      appid: "dmsxjgjp"
+      appKey: "5b812c4c35f7cf47c12bc322bea8284d"
+      apiSecret: "FEAD93B229FF475E99D17B072989F7AF"
+      stream: false
+
+  # 中海油海能大模型
+  zhyHaineng-v1:
+    name: "中海油-海能大模型"
+    description: "中海油自研海能大语言模型"
+    provider: "中海油"
+    params:
+      api-key: "1DB3D20E8CD062209E88"
+      apiSecret: "5C1C7540A47543A8B19CABE63B191BE9"
+      endpoint: "ws://10.74.1.13:30013/1qaz"
+      model-name: "中海油-海能大模型"
+      timeout: 180000
+      temperature: 0.6
+      max-tokens: 2500
+      stream: false

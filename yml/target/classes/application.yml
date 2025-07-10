@@ -1,0 +1,116 @@
+spring:
+  application:
+    name: mark-server
+  datasource:
+    url: jdbc:shardingsphere:classpath:shardingsphere-config.yml   #数据库地址
+    driver-class-name: org.apache.shardingsphere.driver.ShardingSphereDriver
+    type: com.zaxxer.hikari.HikariDataSource
+  redis:
+    database: 3
+    password: Zgyfjch#2024
+    sentinel:
+      master: mymaster
+      nodes:
+        - 172.31.53.176:26379
+        - 172.31.53.178:26379
+        - 172.31.53.179:26379
+  cloud:
+    nacos:
+      discovery:
+        namespace: dev
+        server-addr: 172.31.53.78:8848
+        username: nacos
+        password: xylx1.T#2024
+  config:
+    import: classpath:ai-models.yml # 加载ai-models的配置文件
+
+server:
+  servlet:
+    context-path: /mark
+  port: 8080
+
+mybatis-plus:
+  mapper-locations: classpath*:mapper/**/*Mapper.xml
+  configuration:
+    map-underscore-to-camel-case: true
+  global-config:
+    db-config:
+      id-type: assign_id
+  type-aliases-package: com.iflytek.obu.mark.entity
+
+
+#日志配置管理
+logging:
+  config: classpath:logback-spring.xml
+
+#cas:
+#  server-url-prefix: http://www.sd-dev.iflytek.com/uap-server/
+#  server-login-url: http://www.sd-dev.iflytek.com/uap-server/login
+#  client-host-url: http://www.sd-dev.iflytek.com
+#  single-logout:
+#    enabled: true
+#  validation-type: cas
+
+system:
+#  mark-tool:
+#    tmpDir: /tmp
+#    local-dir: /Users/fangzhuo/IdeaProjects/sdMarkServer/logs/data
+#    remote-dir: /system/mark_tool
+#    tmp-file-clean-time-day: 1
+  mark-tool:
+    tmpDir: /Users/haisen/PostGraduate Folder/实习/科大讯飞/重构标注工具/markToolInit/tmp
+    local-dir: /Users/haisen/PostGraduate Folder/实习/科大讯飞/重构标注工具/markToolInit/logs/data
+    remote-dir: /Users/haisen/PostGraduate Folder/实习/科大讯飞/重构标注工具/markToolInit/system/mark_tool
+    tmp-file-clean-time-day: 1
+  s3-config:
+    bucket: cloud
+    access-key: admin
+    secret-key: 12345678
+    endpoint: 172.31.53.78:9001
+  load-resource:
+    batch-buffer-size: 8
+  other-server:
+    dataset-url: www.sd-dev.iflytek.com:9001
+
+
+cas:
+  #学习平台前端首页地址
+  redirect: /sdom-dataset/
+  server:
+    login: login
+    logout: logout
+    context: http://www.sd-dev.iflytek.com/uap-server/
+    context.inside: http://www.sd-dev.iflytek.com/uap-server/
+  # cas客户端的上下文地址
+  #默认重定向地址为应用首页，即${cas.client.context} + request.getContextPath() + ${cas.client.index}
+  client:
+    context: /datamgr-svc/
+    index: /
+    redirect: /sdom-dataset/
+access:
+  auth:
+    exclude: /,/index.do,/userCenter/,/logout.do,/personal.do,/editInfo.do,/editPwd.do
+  resource:
+    switch: 0
+client:
+  logout:
+    url: /logout.do
+
+#虚拟应用咪咕AI云平台编码
+app:
+  code: MIGU-AI
+  subcode: sdom
+  auth:
+    code: 8HNZQSM5ZAOHIUIQKT3U3QEJL0111FDW
+
+rest:
+  server:
+    url: http://www.sd-dev.iflytek.com:31997/rest/
+ump:
+  server:
+    url: http://www.sd-dev.iflytek.com/uap-manager/
+
+#接口免登陆验证
+session:
+  filter:
+    exclude: /open/api,/actuator
