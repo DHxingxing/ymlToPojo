@@ -4,7 +4,7 @@ import com.iflytek.obu.mark.ai.config.ModelConfig;
 import com.iflytek.obu.mark.ai.config.ModelInfo;
 import com.iflytek.obu.mark.ai.core.strategy.HeaderBuilderStrategy;
 import com.iflytek.obu.mark.ai.utils.MapUtils;
-import org.springframework.stereotype.Component;
+import ai.annotation.AiModelStrategy;
 
 import javax.annotation.Resource;
 import javax.crypto.Mac;
@@ -18,7 +18,7 @@ import java.util.*;
  * @author hxdu5
  * @since 2025/7/9 17:34
  */
-@Component
+@AiModelStrategy(modelType = "中海油-DS", type = AiModelStrategy.StrategyType.HEADER_BUILDER)
 public class ZhyDeepseekHeaderBuilder implements HeaderBuilderStrategy {
 
     @Resource
