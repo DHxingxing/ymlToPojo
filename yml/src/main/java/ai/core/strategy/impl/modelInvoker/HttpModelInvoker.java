@@ -5,9 +5,7 @@ import com.iflytek.obu.mark.ai.config.ModelConfig;
 import com.iflytek.obu.mark.ai.config.ModelInfo;
 import com.iflytek.obu.mark.ai.core.strategy.ModelInvoker;
 import com.iflytek.obu.mark.ai.core.strategy.ModelResponseParser;
-import com.iflytek.obu.mark.ai.factory.HeaderBuilderFactory;
-import com.iflytek.obu.mark.ai.factory.ModelResponseParserFactory;
-import com.iflytek.obu.mark.ai.factory.RequestBodyBuilderFactory;
+import ai.factory.AnnotationBasedModelStrategyFactory;
 import com.iflytek.obu.mark.dto.ai.AiMessageDTO;
 import com.iflytek.obu.mark.enums.ai.ModelCallTypeEnum;
 import lombok.extern.slf4j.Slf4j;
@@ -34,11 +32,7 @@ public class HttpModelInvoker implements ModelInvoker {
     @Resource
     ModelConfig modelConfig;
     @Resource
-    HeaderBuilderFactory headerBuilderFactory;
-    @Resource
-    RequestBodyBuilderFactory requestBodyBuilderFactory;
-    @Resource
-    ModelResponseParserFactory modelResponseParserFactory;
+    AnnotationBasedModelStrategyFactory strategyFactory;
 
 
     private final RestTemplate restTemplate;
@@ -71,8 +65,10 @@ public class HttpModelInvoker implements ModelInvoker {
             log.debug("调用参数: modelKey={}, prompt={}", aiMessageDTO.getModelKey(), aiMessageDTO.getPrompt());
 
             // 构建请求头和请求体
-            Map<String, String> headers = headerBuilderFactory.getHeaders(modelInfo);
-            Map<String, Object> requestBody = requestBodyBuilderFactory.getRequestBody(modelInfo, aiMessageDTO);
+            Map<String, String> headers = strategyFactory.getHeaderBuilder(modelInfo.getProvider())
+                    .builderHeaders(modelInfo);
+            Map<String, Object> requestBody = strategyFactory.getRequestBodyBuilder(modelInfo.getProvider())
+                    .builderRequestBody(modelInfo, aiMessageDTO);
 
             log.debug("请求头: {}", headers);
             log.debug("请求体: {}", requestBody);
@@ -106,7 +102,7 @@ public class HttpModelInvoker implements ModelInvoker {
             }
 
             // 解析响应
-            ModelResponseParser parser = modelResponseParserFactory.getParser(modelInfo.getProvider());
+            ModelResponseParser parser = strategyFactory.getResponseParser(modelInfo.getProvider());
             return parser.parseSync(response.getBody(), modelInfo);
 
         } catch (HttpClientErrorException e) {

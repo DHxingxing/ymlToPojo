@@ -4,9 +4,7 @@ import com.iflytek.obu.mark.ai.config.ModelConfig;
 import com.iflytek.obu.mark.ai.config.ModelInfo;
 import com.iflytek.obu.mark.ai.core.strategy.ModelInvoker;
 import com.iflytek.obu.mark.ai.core.strategy.ModelResponseParser;
-import com.iflytek.obu.mark.ai.factory.HeaderBuilderFactory;
-import com.iflytek.obu.mark.ai.factory.ModelResponseParserFactory;
-import com.iflytek.obu.mark.ai.factory.RequestBodyBuilderFactory;
+import ai.factory.AnnotationBasedModelStrategyFactory;
 import com.iflytek.obu.mark.dto.ai.AiMessageDTO;
 import com.iflytek.obu.mark.enums.ai.ModelCallTypeEnum;
 import lombok.extern.slf4j.Slf4j;
@@ -31,11 +29,7 @@ public class SseModelInvoker implements ModelInvoker {
     @Resource
     private ModelConfig modelConfig;
     @Resource
-    private HeaderBuilderFactory headerBuilderFactory;
-    @Resource
-    private RequestBodyBuilderFactory requestBodyBuilderFactory;
-    @Resource
-    private ModelResponseParserFactory responseParserFactory;
+    private AnnotationBasedModelStrategyFactory strategyFactory;
 
     @Override
     public boolean supports(ModelInfo modelInfo) {
@@ -53,8 +47,10 @@ public class SseModelInvoker implements ModelInvoker {
         ModelInfo modelInfo = modelConfig.getModelInfo(aiMessageDTO.getModelKey());
 
         // 2. 使用工厂模式构建请求头和请求体
-        Map<String, String> headers = headerBuilderFactory.getHeaders(modelInfo);
-        Map<String, Object> requestBody = requestBodyBuilderFactory.getRequestBody(modelInfo, aiMessageDTO);
+        Map<String, String> headers = strategyFactory.getHeaderBuilder(modelInfo.getProvider())
+                .builderHeaders(modelInfo);
+        Map<String, Object> requestBody = strategyFactory.getRequestBodyBuilder(modelInfo.getProvider())
+                .builderRequestBody(modelInfo, aiMessageDTO);
 
         log.info("开始SSE流式调用模型: {} (提供商: {})", modelInfo.getName(), modelInfo.getProvider());
         log.debug("请求端点: {}", modelInfo.getParams().getEndpoint());
@@ -75,7 +71,7 @@ public class SseModelInvoker implements ModelInvoker {
                 .bodyToFlux(String.class)  // 将响应转换为字符串流
                 .map(line -> {
                     // 5. 使用提供商特定的解析器处理SSE数据
-                    ModelResponseParser parser = responseParserFactory.getParser(modelInfo.getProvider());
+                    ModelResponseParser parser = strategyFactory.getResponseParser(modelInfo.getProvider());
                     return parser.parseStreamLine(line, modelInfo);
                 })
                 .filter(Objects::nonNull)  // 过滤掉null值

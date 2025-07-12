@@ -5,9 +5,7 @@ import com.iflytek.obu.mark.ai.config.ModelConfig;
 import com.iflytek.obu.mark.ai.config.ModelInfo;
 import com.iflytek.obu.mark.ai.core.strategy.ModelInvoker;
 import com.iflytek.obu.mark.ai.core.strategy.ModelResponseParser;
-import com.iflytek.obu.mark.ai.factory.HeaderBuilderFactory;
-import com.iflytek.obu.mark.ai.factory.ModelResponseParserFactory;
-import com.iflytek.obu.mark.ai.factory.RequestBodyBuilderFactory;
+import ai.factory.AnnotationBasedModelStrategyFactory;
 import com.iflytek.obu.mark.dto.ai.AiMessageDTO;
 import com.iflytek.obu.mark.enums.ai.ModelCallTypeEnum;
 import lombok.extern.slf4j.Slf4j;
@@ -36,11 +34,7 @@ public class WebSocketModelInvoker implements ModelInvoker {
     @Resource
     private ModelConfig modelConfig;
     @Resource
-    private HeaderBuilderFactory headerBuilderFactory;
-    @Resource
-    private RequestBodyBuilderFactory requestBodyBuilderFactory;
-    @Resource
-    private ModelResponseParserFactory modelResponseParserFactory;
+    private AnnotationBasedModelStrategyFactory strategyFactory;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -62,15 +56,17 @@ public class WebSocketModelInvoker implements ModelInvoker {
             log.debug("调用参数: modelKey={}, prompt={}", aiMessageDTO.getModelKey(), aiMessageDTO.getPrompt());
 
             // 使用工厂模式构建请求头和请求体
-            Map<String, String> headers = headerBuilderFactory.getHeaders(modelInfo);
-            Map<String, Object> requestBody = requestBodyBuilderFactory.getRequestBody(modelInfo, aiMessageDTO);
+            Map<String, String> headers = strategyFactory.getHeaderBuilder(modelInfo.getProvider())
+                    .builderHeaders(modelInfo);
+            Map<String, Object> requestBody = strategyFactory.getRequestBodyBuilder(modelInfo.getProvider())
+                    .builderRequestBody(modelInfo, aiMessageDTO);
 
             // 获取WebSocket连接URL
             String wsUrl = buildWebSocketUrl(modelInfo, headers);
             log.debug("WebSocket连接URL: {}", wsUrl);
 
             // 创建响应处理器
-            WebSocketResponseHandler responseHandler = new WebSocketResponseHandler(modelInfo, modelResponseParserFactory);
+            WebSocketResponseHandler responseHandler = new WebSocketResponseHandler(modelInfo, strategyFactory);
             
             // 创建WebSocket客户端
             webSocketClient = createWebSocketClient(wsUrl, responseHandler);
@@ -193,9 +189,9 @@ public class WebSocketModelInvoker implements ModelInvoker {
         private volatile String result;
         private volatile Exception error;
 
-        public WebSocketResponseHandler(ModelInfo modelInfo, ModelResponseParserFactory parserFactory) {
+        public WebSocketResponseHandler(ModelInfo modelInfo, AnnotationBasedModelStrategyFactory strategyFactory) {
             this.modelInfo = modelInfo;
-            this.parser = parserFactory.getParser(modelInfo.getProvider());
+            this.parser = strategyFactory.getResponseParser(modelInfo.getProvider());
         }
 
         public void handleMessage(String message) {

@@ -5,7 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.iflytek.obu.mark.ai.config.ModelInfo;
 import com.iflytek.obu.mark.ai.core.strategy.ModelResponseParser;
-import org.springframework.stereotype.Component;
+import ai.annotation.AiModelStrategy;
 
 /**
  * 中海油海能大模型响应解析器
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
  * @author hxdu5
  * @since 2025/7/12 21:17
  */
-@Component("中海油")
+@AiModelStrategy(modelType = "中海油", type = AiModelStrategy.StrategyType.RESPONSE_PARSER)
 public class ZhyHainengParser implements ModelResponseParser {
 
     @Override

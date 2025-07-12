@@ -4,14 +4,14 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.iflytek.obu.mark.ai.config.ModelInfo;
 import com.iflytek.obu.mark.ai.core.strategy.ModelResponseParser;
-import org.springframework.stereotype.Component;
+import ai.annotation.AiModelStrategy;
 
 
 /**
  * @author hxdu5
  * @since 2025/7/11 16:02
  */
-@Component("DeepSeek")
+@AiModelStrategy(modelType = "DeepSeek", type = AiModelStrategy.StrategyType.RESPONSE_PARSER)
 public class DeepSeekParser implements ModelResponseParser {
 
     private final ObjectMapper mapper = new ObjectMapper();

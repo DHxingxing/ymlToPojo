@@ -4,7 +4,7 @@ import com.iflytek.obu.mark.ai.config.ModelInfo;
 import com.iflytek.obu.mark.ai.core.strategy.RequestBodyBuilderStrategy;
 import com.iflytek.obu.mark.ai.utils.MapUtils;
 import com.iflytek.obu.mark.dto.ai.AiMessageDTO;
-import org.springframework.stereotype.Component;
+import ai.annotation.AiModelStrategy;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
@@ -18,7 +18,7 @@ import static com.iflytek.obu.mark.ai.utils.MapUtils.mapOf;
  * @author hxdu5
  * @since 2025/7/11 09:49
  */
-@Component
+@AiModelStrategy(modelType = "DeepSeek", type = AiModelStrategy.StrategyType.REQUEST_BODY_BUILDER)
 public class DeepSeekRequestBodyBuilder implements RequestBodyBuilderStrategy {
     @Override
     public boolean supports(ModelInfo modelInfo) {

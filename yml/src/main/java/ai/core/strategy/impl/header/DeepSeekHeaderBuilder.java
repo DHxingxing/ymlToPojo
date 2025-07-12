@@ -5,7 +5,7 @@ import cn.hutool.json.JSONObject;
 import com.iflytek.obu.mark.ai.config.ModelInfo;
 import com.iflytek.obu.mark.ai.core.strategy.HeaderBuilderStrategy;
 import com.iflytek.obu.mark.ai.utils.MapUtils;
-import org.springframework.stereotype.Component;
+import ai.annotation.AiModelStrategy;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-@Component
+@AiModelStrategy(modelType = "DeepSeek", type = AiModelStrategy.StrategyType.HEADER_BUILDER)
 public class DeepSeekHeaderBuilder implements HeaderBuilderStrategy {
 
     @Override
