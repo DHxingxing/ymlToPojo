@@ -1,10 +1,11 @@
-package org.iflytek.ai.config;
+package ai.config;
 
 import cn.hutool.core.util.ObjectUtil;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.iflytek.obu.mark.enums.ai.ModelCallTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,7 +20,6 @@ import java.util.Map;
 /**
  * 模型参数配置类
  * 对应 YAML 中的 params 部分
- * 
  * 工作流程：
  * 1. Spring Boot 配置绑定：YAML → Map<String,Object>
  * 2. ModelParamsConverter：Map<String,Object> → Jackson → ModelParams
@@ -41,6 +41,9 @@ public class ModelParams {
     @NotBlank(message = "端点地址不能为空")
     private String endpoint;
 
+    @NotBlank(message = "模型名字不能为空")
+    private String modelName;
+
     /*--- 公共可选参数（带默认值） ---*/
     @Builder.Default
     private Integer timeout = 30000;
@@ -54,6 +57,14 @@ public class ModelParams {
 
     @Builder.Default
     private Double temperature = 0.7;
+
+    @JsonProperty("call-type")
+    @Builder.Default
+    private String callType = "HTTP";
+
+    public ModelCallTypeEnum getCallTypeEnum(){
+        return ModelCallTypeEnum.fromType(this.callType);
+    }
 
     /*--- 动态参数收集器 ---*/
     @Builder.Default
@@ -79,8 +90,6 @@ public class ModelParams {
         return extraParams != null ? extraParams : Collections.emptyMap();
     }
 
-    /*--- 便捷访问方法 ---*/
-    
     /**
      * 获取字符串类型的动态参数
      */

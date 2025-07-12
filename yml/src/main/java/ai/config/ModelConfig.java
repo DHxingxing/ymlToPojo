@@ -1,4 +1,4 @@
-package org.iflytek.ai.config;
+package ai.config;
 
 import cn.hutool.core.util.ObjectUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -21,9 +21,7 @@ public class ModelConfig extends HashMap<String, ModelInfo> {
     @PostConstruct
     public void init() {
         log.info("加载了 {} 个AI模型配置", this.size());
-        this.forEach((key, config) -> {
-            log.info("模型 [{}]: {} ({})", key, config.getName(), config.getProvider());
-        });
+        this.forEach((key, config) -> log.info("模型 [{}]: {} ({})", key, config.getName(), config.getProvider()));
         System.out.println(this.size());
     }
 

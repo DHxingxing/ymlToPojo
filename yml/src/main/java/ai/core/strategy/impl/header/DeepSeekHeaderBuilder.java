@@ -1,16 +1,19 @@
 // DeepSeekHeaderBuilder.java
-package org.iflytek.ai.core.impl.header;
+package ai.core.strategy.impl.header;
 
 import cn.hutool.json.JSONObject;
-import lombok.extern.slf4j.Slf4j;
-import org.iflytek.ai.config.ModelInfo;
-import org.iflytek.ai.core.strategy.HeaderBuilderStrategy;
+import com.iflytek.obu.mark.ai.config.ModelInfo;
+import com.iflytek.obu.mark.ai.core.strategy.HeaderBuilderStrategy;
+import com.iflytek.obu.mark.ai.utils.MapUtils;
 import org.springframework.stereotype.Component;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.*;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 @Component
 public class DeepSeekHeaderBuilder implements HeaderBuilderStrategy {
@@ -43,13 +46,14 @@ public class DeepSeekHeaderBuilder implements HeaderBuilderStrategy {
         String xServerParam = Base64.getEncoder().encodeToString(new JSONObject(tmp_xServerParam).toString().getBytes());
         String xCheckSum = generateMD5(appKey + xCurTime + xServerParam);
 
-        Map<String, String> header = new HashMap<>();
-        header.put("appKey", appKey);
-        header.put("X-Server-Param", xServerParam);
-        header.put("X-CurTime", xCurTime);
-        header.put("X-CheckSum", xCheckSum);
-        header.put("content-type", "application/json");
-        return header;
+
+        return MapUtils.mapOf(
+                "appKey", appKey,
+                "X-Server-Param", xServerParam,
+                "X-CurTime", xCurTime,
+                "X-CheckSum", xCheckSum,
+                "content-type", "application/json"
+        );
     }
 
     private String generateMD5(String input) throws NoSuchAlgorithmException {

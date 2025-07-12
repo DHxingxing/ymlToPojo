@@ -1,9 +1,8 @@
-package org.iflytek.ai.factory;
+package ai.factory;
 
-import org.iflytek.ai.config.ModelConfig;
-import org.iflytek.ai.config.ModelInfo;
-import org.iflytek.ai.config.ModelParams;
-import org.iflytek.ai.core.strategy.HeaderBuilderStrategy;
+import com.iflytek.obu.mark.ai.config.ModelConfig;
+import com.iflytek.obu.mark.ai.config.ModelInfo;
+import com.iflytek.obu.mark.ai.core.strategy.HeaderBuilderStrategy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

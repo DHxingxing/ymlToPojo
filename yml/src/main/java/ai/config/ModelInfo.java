@@ -1,10 +1,8 @@
-package org.iflytek.ai.config;
+package ai.config;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.validation.constraints.NotBlank;
@@ -35,11 +33,15 @@ public class ModelInfo {
     // 模型参数（核心配置）
     // Spring Boot会自动绑定YAML到这个Map
     @NotNull(message = "模型参数不能为空")
+    @JsonIgnore
     private Map<String, Object> params;
-    
+
     // 缓存转换后的ModelParams对象
+    @JsonIgnore
+    @Getter(AccessLevel.NONE)
+    @NotBlank(message = "RequestBody中的模型名不能为空")
     private transient ModelParams modelParams;
-    
+
     /**
      * 获取转换后的ModelParams对象
      * 这个方法会使用我们的转换器将Map转换为ModelParams
@@ -50,15 +52,18 @@ public class ModelInfo {
             // 使用转换器进行转换
             ModelParamsConverter converter = new ModelParamsConverter();
             modelParams = converter.convert(params);
-            log.debug("参数转换完成，extraParams大小: {}", 
-                modelParams.getExtraParams().size());
+            if (modelParams != null) {
+                log.debug("参数转换完成，extraParams大小: {}",
+                        modelParams.getExtraParams().size());
+            }
         }
         return modelParams;
     }
-    
+
     /**
      * 设置原始的Map参数
      */
+    @JsonIgnore
     public void setParams(Map<String, Object> params) {
         this.params = params;
         this.modelParams = null; // 清除缓存，强制重新转换

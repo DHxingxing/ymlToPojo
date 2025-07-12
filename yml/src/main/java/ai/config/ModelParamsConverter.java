@@ -1,12 +1,13 @@
-package org.iflytek.ai.config;
+package ai.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.context.properties.ConfigurationPropertiesBinding;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
-import javax.validation.constraints.NotNull;
 import java.util.Map;
 
 /**
@@ -19,24 +20,25 @@ import java.util.Map;
 public class ModelParamsConverter implements Converter<Map<String, Object>, ModelParams> {
 
     // 使用局部ObjectMapper，避免循环依赖
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER =
+            new ObjectMapper().setPropertyNamingStrategy(PropertyNamingStrategies.KEBAB_CASE);
 
     @Override
     public ModelParams convert(@NotNull Map<String, Object> source) {
         log.debug("开始转换配置参数，源数据: {}", source);
-        
+
         try {
             // 关键：使用Jackson的convertValue，这会触发@JsonAnySetter
             ModelParams result = MAPPER.convertValue(source, ModelParams.class);
-            
-            log.debug("转换完成，extraParams大小: {}", 
-                result.getExtraParams() != null ? result.getExtraParams().size() : 0);
-            
+
+            log.debug("转换完成，extraParams大小: {}",
+                    result.getExtraParams() != null ? result.getExtraParams().size() : 0);
+
             // 输出extraParams内容用于调试
             if (result.getExtraParams() != null && !result.getExtraParams().isEmpty()) {
                 log.info("捕获到的动态参数: {}", result.getExtraParams());
             }
-            
+
             return result;
         } catch (Exception e) {
             log.error("参数转换失败，源数据: {}", source, e);

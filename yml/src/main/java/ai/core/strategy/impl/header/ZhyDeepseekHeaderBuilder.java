@@ -1,8 +1,9 @@
-package org.iflytek.ai.core.impl.header;
+package ai.core.strategy.impl.header;
 
-import org.iflytek.ai.config.ModelConfig;
-import org.iflytek.ai.config.ModelInfo;
-import org.iflytek.ai.core.strategy.HeaderBuilderStrategy;
+import com.iflytek.obu.mark.ai.config.ModelConfig;
+import com.iflytek.obu.mark.ai.config.ModelInfo;
+import com.iflytek.obu.mark.ai.core.strategy.HeaderBuilderStrategy;
+import com.iflytek.obu.mark.ai.utils.MapUtils;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -42,11 +43,11 @@ public class ZhyDeepseekHeaderBuilder implements HeaderBuilderStrategy {
             String signature = computeHmacSignature(url, date, apiSecret);
             String authorization = buildAuthorizationHeader(apiKey, signature);
 
-            Map<String, String> header = new HashMap<>();
-            header.put("authorization", authorization);
-            header.put("host", url.getHost());
-            header.put("date", date);
-            return header;
+            return MapUtils.mapOf(
+                    "authorization", authorization,
+                    "host", url.getHost(),
+                    "date", date
+            );
         } catch (Exception e) {
             throw new RuntimeException("assemble requestHeader  error:" + e.getMessage());
         }

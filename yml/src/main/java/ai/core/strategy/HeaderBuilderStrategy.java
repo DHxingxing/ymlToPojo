@@ -1,6 +1,6 @@
-package org.iflytek.ai.core.strategy;
+package ai.core.strategy;
 
-import org.iflytek.ai.config.ModelInfo;
+import com.iflytek.obu.mark.ai.config.ModelInfo;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
